@@ -8,10 +8,17 @@ Uma interface web front-end simples para consumir os dados vindos da API_Ecommer
 
 ## Instalação
 
-Para instalar e executar a interface web, com o Node.JS instalado, basta acessar a pasta raíz do projeto e executar os seguintes comandos no terminal:
+Para instalar a interface web, com o Node.JS instalado, basta acessar a pasta raíz do projeto e executar o seguinte comando no terminal:
 
 ```
 npm install --legacy-peer-deps
+```
+
+## Execução
+
+Para executar a interface web, é necessário primeiramente executar a api [API_Ecommerce](https://github.com/ildeirjr/API_Ecommerce) e deixá-la ativa na janela do terminal que se abrir. Em seguida, basta ir na pasta raíz do projeto e executar o seguinte comando em uma nova janela do terminal:
+
+```
 npm start
 ```
 
