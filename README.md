@@ -6,13 +6,16 @@ Uma interface web front-end simples para consumir os dados vindos da API_Ecommer
 
 ![Image](https://i.postimg.cc/XJjC4rJ8/dashboard.png)
 
+## Instalação
 
-Para executar a interface, com o Node.JS instalado, basta acessar a pasta raíz do projeto e executar os seguintes comandos no terminal:
+Para instalar e executar a interface web, com o Node.JS instalado, basta acessar a pasta raíz do projeto e executar os seguintes comandos no terminal:
 
 ```
 npm install --legacy-peer-deps
 npm start
 ```
+
+## Dados de autenticação
 
 Dados de usuários cadastrados no banco para realizar login:  
   
