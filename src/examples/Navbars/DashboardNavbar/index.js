@@ -129,6 +129,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const handleLogout = () => {
     if (localStorage.getItem('api_token') != null) {
       localStorage.removeItem('api_token');
+      localStorage.removeItem('username');
       navigate('/');
     }
   }
