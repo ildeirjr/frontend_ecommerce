@@ -24,19 +24,20 @@ import MDBox from "components/MDBox";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
-import ReportsBarChart from "examples/Charts/BarCharts/ReportsBarChart";
-import ReportsLineChart from "examples/Charts/LineCharts/ReportsLineChart";
 import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatisticsCard";
 import MDButton from "components/MDButton";
 
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import FirstPageIcon from '@mui/icons-material/FirstPage';
+import LastPageIcon from '@mui/icons-material/LastPage';
+
 // Data
-import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
 import reportsLineChartData from "layouts/dashboard/data/reportsLineChartData";
 
 // Dashboard components
 import Orders from "layouts/dashboard/components/Orders";
 import Teams from "layouts/dashboard/components/Teams";
-import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
 
 import { useState, useEffect } from 'react';
 
@@ -57,14 +58,15 @@ function Dashboard() {
 
   axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem("api_token")}`;
 
-
   useEffect(() => {
-    axiosInstance.get('/api/Orders', { params: { skip: currentPage, take: pageSize } })
+    axiosInstance.get('/api/Orders', { params: { skip: (currentPage * pageSize), take: pageSize } })
     .then(function (response) {
       setTotalOrders(response.data.total)
       setOrders(response.data.orders)
     })
+  }, [currentPage])
 
+  useEffect(() => {
     axiosInstance.get('/api/Products')
     .then(function (response) {
       setProducts(response.data)
@@ -77,34 +79,73 @@ function Dashboard() {
   }, [])
 
   const Paginacao = ({ totalCount, pageSize }) => {
-    const qtdPages = totalCount / pageSize;
-    const pagesArray = []
+    const qtdPages = Math.ceil(totalCount / pageSize);
 
-    for (var i = 0 ; i < qtdPages ; i++) {
-      pagesArray.push(i+1)
+    const handlePreviousPage = () => {
+      if (currentPage > 0) {
+        setCurrentPage(currentPage - 1)
+      }
     }
 
-    const handlePageClick = (index) => {
-      console.log(index)
-      axiosInstance.get('/api/Orders', { params: { skip: (index * pageSize), take: pageSize } })
-      .then(function (response) {
-        setTotalOrders(response.data.total)
-        setOrders(response.data.orders)
-        setCurrentPage(index)
-      })
+    const handleNextPage = () => {
+      if (currentPage < qtdPages){
+        setCurrentPage(currentPage + 1)
+      }
+    }
+
+    const handleFirstPage= () => {
+      setCurrentPage(0)
+    }
+
+    const handleLastPage= () => {
+      setCurrentPage(qtdPages - 1)
     }
 
     return (
-      pagesArray.map((value) => 
+      <MDBox>
         <MDButton 
-          color={((value-1) == currentPage ? "info" : "white")} 
+          color="info"
           size="small" 
           circular={true}
-          onClick={() => {handlePageClick(value-1)}}
+          onClick={() => {handleFirstPage()}}
+          disabled={currentPage == 0 ? true : false}
+          style={{margin: "5px"}}
         >
-          {value}
+          <FirstPageIcon></FirstPageIcon>
         </MDButton>
-      )
+        <MDButton 
+          color="info"
+          size="small" 
+          circular={true}
+          onClick={() => {handlePreviousPage()}}
+          disabled={currentPage == 0 ? true : false}
+          style={{margin: "5px"}}
+        >
+          <ArrowBackIosNewIcon></ArrowBackIosNewIcon>
+        </MDButton>
+        <MDButton 
+          color="info"
+          size="small" 
+          circular={true}
+          onClick={() => {handleNextPage()}}
+          disabled={currentPage == (qtdPages - 1) ? true : false}
+          style={{margin: "5px"}}
+        >
+          <ArrowForwardIosIcon></ArrowForwardIosIcon>
+        </MDButton>
+        <MDButton 
+          color="info"
+          size="small" 
+          circular={true}
+          onClick={() => {handleLastPage()}}
+          disabled={currentPage == (qtdPages - 1) ? true : false}
+          style={{margin: "5px"}}
+        >
+          <LastPageIcon></LastPageIcon>
+        </MDButton>
+        <MDTypography style={{marginLeft: "10px"}} variant="caption">{`Mostrando página ${currentPage + 1} de ${qtdPages}`}</MDTypography>
+      </MDBox>
+      
     )
   }
 
@@ -112,7 +153,7 @@ function Dashboard() {
     <DashboardLayout>
       <DashboardNavbar />
       <MDBox>
-        <MDAlert>{`Seja bem vindo ${localStorage.getItem("username")}!`}</MDAlert>
+        <MDAlert color="dark">{`Seja bem vindo ${localStorage.getItem("username")}!`}</MDAlert>
       </MDBox>
       <MDBox py={3}>
         <Grid container spacing={3}>
@@ -123,11 +164,6 @@ function Dashboard() {
                 icon="weekend"
                 title="Pedidos"
                 count={totalOrders}
-                // percentage={{
-                //   color: "success",
-                //   amount: "+55%",
-                //   label: "than lask week",
-                // }}
               />
             </MDBox>
           </Grid>
@@ -137,11 +173,6 @@ function Dashboard() {
                 icon="leaderboard"
                 title="Produtos"
                 count={products.length}
-                // percentage={{
-                //   color: "success",
-                //   amount: "+3%",
-                //   label: "than last month",
-                // }}
               />
             </MDBox>
           </Grid>
@@ -152,81 +183,17 @@ function Dashboard() {
                 icon="store"
                 title="Equipes"
                 count={teams.length}
-                // percentage={{
-                //   color: "success",
-                //   amount: "+1%",
-                //   label: "than yesterday",
-                // }}
               />
             </MDBox>
           </Grid>
-          {/* <Grid item xs={12} md={6} lg={3}>
-            <MDBox mb={1.5}>
-              <ComplexStatisticsCard
-                color="primary"
-                icon="person_add"
-                title="Followers"
-                count="+91"
-                percentage={{
-                  color: "success",
-                  amount: "",
-                  label: "Just updated",
-                }}
-              />
-            </MDBox>
-          </Grid> */}
         </Grid>
-        {/* <MDBox mt={4.5}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6} lg={4}>
-              <MDBox mb={3}>
-                <ReportsBarChart
-                  color="info"
-                  title="website views"
-                  description="Last Campaign Performance"
-                  date="campaign sent 2 days ago"
-                  chart={reportsBarChartData}
-                />
-              </MDBox>
-            </Grid>
-            <Grid item xs={12} md={6} lg={4}>
-              <MDBox mb={3}>
-                <ReportsLineChart
-                  color="success"
-                  title="daily sales"
-                  description={
-                    <>
-                      (<strong>+15%</strong>) increase in today sales.
-                    </>
-                  }
-                  date="updated 4 min ago"
-                  chart={sales}
-                />
-              </MDBox>
-            </Grid>
-            <Grid item xs={12} md={6} lg={4}>
-              <MDBox mb={3}>
-                <ReportsLineChart
-                  color="dark"
-                  title="completed tasks"
-                  description="Last Campaign Performance"
-                  date="just updated"
-                  chart={tasks}
-                />
-              </MDBox>
-            </Grid>
-          </Grid>
-        </MDBox> */}
-        
         <MDBox>
           <Grid container spacing={3}>
-            
             <Grid item xs={12} md={12} lg={12}>
               <MDTypography variant="h4" fontWeight="bold">Pedidos</MDTypography>
               <Orders orders={orders} />
               <Paginacao totalCount={totalOrders} pageSize={pageSize}/>
             </Grid>
-            
             <Grid item xs={12} md={12} lg={12}>
               <MDTypography variant="h4" fontWeight="bold">Equipes</MDTypography>
               <Teams teams={teams} />
