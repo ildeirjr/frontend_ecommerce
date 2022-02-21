@@ -50,6 +50,7 @@ function Orders({ orders }) {
               {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
             </IconButton>
           </TableCell>
+          <TableCell align="center">{row.id}</TableCell>
           <TableCell align='center' component="th" scope="row">
             {format(parseISO(row.createdDate), "dd/MM/yyyy")}
           </TableCell>
@@ -100,6 +101,7 @@ function Orders({ orders }) {
         <TableHead style={{display: "contents"}}>
           <TableRow>
             <TableCell />
+            <TableCell align='center'>Id do pedido</TableCell>
             <TableCell align='center'>Data do pedido</TableCell>
             <TableCell align="center">Data de entrega</TableCell>
             <TableCell align="center">Endereço</TableCell>
